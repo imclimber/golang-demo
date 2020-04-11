@@ -1,7 +1,6 @@
-package main
+package sorts
 
 import (
-	"log"
 	"testgo/utils"
 )
 
@@ -22,13 +21,13 @@ func SelectSort(nums []int) {
 	}
 }
 
-func main() {
+// func main() {
 
-	nums := []int{2, 1, 4, 3, 6, 5, 8, 7, 10, 9}
+// 	nums := []int{2, 1, 4, 3, 6, 5, 8, 7, 10, 9}
 
-	log.Println(nums)
+// 	log.Println(nums)
 
-	SelectSort(nums)
+// 	SelectSort(nums)
 
-	log.Println(nums)
-}
+// 	log.Println(nums)
+// }

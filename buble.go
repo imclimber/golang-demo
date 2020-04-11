@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"testgo/sorts"
 	"testgo/utils"
 )
 
@@ -22,7 +23,8 @@ func main() {
 
 	log.Println(nums)
 
-	BubleSort(nums)
+	// BubleSort(nums)
+	sorts.SelectSort(nums)
 
 	log.Println(nums)
 }

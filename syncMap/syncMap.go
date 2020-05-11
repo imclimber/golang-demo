@@ -49,11 +49,11 @@ func main() {
 
 // 说明
 // 1、Store   存 key,value
-
 // 2、LoadOrStore   取&存-具体看代码
-
 // 3、Load   取key对应的value
-
 // 4、Range   遍历所有的key,value
-
 // 5、Delete   删除key,及其value
+
+// 参考文档：
+// https://blog.csdn.net/sc_lilei/article/details/81390185
+// https://segmentfault.com/a/1190000010294041

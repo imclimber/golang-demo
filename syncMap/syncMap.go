@@ -46,3 +46,14 @@ func main() {
 	fmt.Println(m.Load(1))
 
 }
+
+// 说明
+// 1、Store   存 key,value
+
+// 2、LoadOrStore   取&存-具体看代码
+
+// 3、Load   取key对应的value
+
+// 4、Range   遍历所有的key,value
+
+// 5、Delete   删除key,及其value

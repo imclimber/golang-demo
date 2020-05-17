@@ -53,7 +53,8 @@ func ConnectToDatabase() {
 	maxIdle := 30
 	maxConn := 30
 	dbConfig := utils.Config.DB
-	dbConnStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.DBName)
+	dbConnStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local", dbConfig.User, dbConfig.Password, dbConfig.Host,
+		dbConfig.Port, dbConfig.DBName)
 	fmt.Println(dbConnStr)
 	orm.RegisterDataBase("default", "mysql", dbConnStr, maxIdle, maxConn)
 
@@ -82,7 +83,7 @@ func main() {
 	userOne := User{Name: "oneName"}
 	userTwo := User{Name: "twoName"}
 	var users = []User{userOne, userTwo}
-	num, err := o.InsertMulti(2, &users)
+	num, err := o.InsertMulti(len(users), &users)
 	if err != nil {
 		fmt.Errorf("InsertMulti error: %v", err)
 		return

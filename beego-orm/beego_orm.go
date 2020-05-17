@@ -38,11 +38,12 @@ func init() {
 	ConnectToDatabase()
 }
 
+// ORMDB ...
+var ORMDB orm.Ormer
+
 // ConnectToDatabase ...
 func ConnectToDatabase() {
-	// register model
-	// 每次连接数据库之前均需要注册模型
-	orm.RegisterModel(new(User))
+	orm.RegisterDriver("mysql", orm.DRMySQL)
 
 	// set default database
 	// 参数1        数据库的别名，用来在 ORM 中切换数据库使用
@@ -55,8 +56,10 @@ func ConnectToDatabase() {
 	dbConfig := utils.Config.DB
 	dbConnStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local", dbConfig.User, dbConfig.Password, dbConfig.Host,
 		dbConfig.Port, dbConfig.DBName)
-	fmt.Println(dbConnStr)
 	orm.RegisterDataBase("default", "mysql", dbConnStr, maxIdle, maxConn)
+
+	// register model
+	orm.RegisterModel(new(User))
 
 	// create table
 	// 对注册的模型建表
@@ -64,15 +67,17 @@ func ConnectToDatabase() {
 
 	// 简单的设置 Debug 为 true 打印查询的语句
 	orm.Debug = true
+
+	ORMDB = orm.NewOrm()
+	ORMDB.Using("default") // 默认使用 default，你可以指定为其他数据库
 }
 
 func main() {
 	var err error
-	o := orm.NewOrm()
 
 	// // insert
 	// user := User{Name: "slene"}
-	// id, err := o.Insert(&user)
+	// id, err := ORMDB.Insert(&user)
 	// if err != nil {
 	// 	fmt.Errorf("insert error: %v", err)
 	// 	return
@@ -83,7 +88,7 @@ func main() {
 	userOne := User{Name: "oneName"}
 	userTwo := User{Name: "twoName"}
 	var users = []User{userOne, userTwo}
-	num, err := o.InsertMulti(len(users), &users)
+	num, err := ORMDB.InsertMulti(len(users), &users)
 	if err != nil {
 		fmt.Errorf("InsertMulti error: %v", err)
 		return
@@ -92,7 +97,7 @@ func main() {
 
 	// // update
 	// user := User{Id: 1, Name: "astaxie"}
-	// num, err := o.Update(&user)
+	// num, err := ORMDB.Update(&user)
 	// if err != nil {
 	// 	fmt.Errorf("update error: %v", err)
 	// 	return
@@ -101,7 +106,7 @@ func main() {
 
 	// read one
 	// u := User{Id: 1}
-	// err = o.Read(&u)
+	// err = ORMDB.Read(&u)
 	// if err != nil {
 	// 	fmt.Errorf("read error: %v", err)
 	// 	return
@@ -110,7 +115,7 @@ func main() {
 
 	// delete
 	// u := User{Id: 1}
-	// num, err := o.Delete(&u)
+	// num, err := ORMDB.Delete(&u)
 	// if err != nil {
 	// 	fmt.Errorf("delete error: %v", err)
 	// 	return

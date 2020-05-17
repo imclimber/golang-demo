@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"strings"
-	"testgo/utils"
+
+	"github.com/golang-demo/utils"
 
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql" // import your used driver

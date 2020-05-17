@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
-	"testgo/sorts"
-	"testgo/utils"
+
+	"github.com/golang-demo/sorts"
+	"github.com/golang-demo/utils"
 )
 
 // BubleSort ...

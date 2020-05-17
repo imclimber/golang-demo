@@ -1,7 +1,7 @@
 package sorts
 
 import (
-	"testgo/utils"
+	"github.com/golang-demo/utils"
 )
 
 // SelectSort ...

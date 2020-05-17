@@ -1,6 +1,0 @@
-{"file":"/home/xusz/projects/testgo/log/log.go:99","func":"main.main()","level":"error","msg":"hello, world! - error","time":"2020-05-15T00:09:56+08:00"}
-{"file":"/home/xusz/projects/testgo/log/log.go:99","func":"main.main()","level":"error","msg":"hello, world! - error","time":"2020-05-15T00:09:58+08:00"}
-{"file":"/home/xusz/projects/testgo/log/log.go:99","func":"main.main()","level":"error","msg":"hello, world! - error","time":"2020-05-15T00:10:00+08:00"}
-{"file":"/home/xusz/projects/testgo/log/log.go:99","func":"main.main()","level":"error","msg":"hello, world! - error","time":"2020-05-15T00:10:02+08:00"}
-{"file":"/home/xusz/projects/testgo/log/log.go:99","func":"main.main()","level":"error","msg":"hello, world! - error","time":"2020-05-15T00:10:04+08:00"}
-{"file":"/home/xusz/projects/testgo/log/log.go:99","func":"main.main()","level":"error","msg":"hello, world! - error","time":"2020-05-15T00:10:06+08:00"}

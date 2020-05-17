@@ -1,0 +1,24 @@
+service:
+    port: 1237
+
+DebugMode: true
+
+db:
+    host: 47.112.200.141
+    dbtype: mysql
+    dbname: entity-list
+    user: list-user
+    password: pacman
+    port: 3306    
+    LogMode: true
+
+MongoDBConfig:
+    Host: mongodb://adsh-user:pacman@47.112.200.141:27017/adsh
+    DBName: adsh
+    EntityCollection: entity_collection
+    CompanyCollection: company_full_data_v1
+    InsInvestorCollection: ins_investor_full_data_v1
+    LPCollection: lp_full_data_v1
+    PersonCollection: person_full_data_v1
+    FundCollection: fund_full_data_v1    
+    DealCollection: deal_full_data_v1

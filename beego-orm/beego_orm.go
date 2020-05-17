@@ -1,4 +1,4 @@
-package main
+package beego_orm
 
 import (
 	"fmt"

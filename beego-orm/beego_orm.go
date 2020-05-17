@@ -42,3 +42,6 @@ func ConnectToDatabase() {
 	ORMDB = orm.NewOrm()
 	ORMDB.Using("default") // 默认使用 default，你可以指定为其他数据库
 }
+
+// 参考：https://github.com/astaxie/beego/tree/master/orm
+// 参考：https://beego.me/docs/mvc/model/orm.md

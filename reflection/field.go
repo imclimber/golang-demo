@@ -58,6 +58,9 @@ func GetStructTagAndFieldValue() {
 				fmt.Println("fieldName and kind and value: ", rType.Field(i).Name, rValue.Field(i).Elem().Kind(), rValue.Field(i).Elem().Interface())
 			} else {
 				fmt.Println("nil value of field: ", rType.Field(i).Name)
+
+				// 测试，如果 rValue.Field(i) 为空，依然可以调用 Elem() 方法
+				fmt.Println("fieldName and kind and value: ", rType.Field(i).Name, rValue.Field(i).Elem())
 			}
 
 			continue

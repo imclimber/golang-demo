@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/astaxie/beego v1.12.1
 	github.com/dgryski/trifles v0.0.0-20190318185328-a8d75aae118c
+	github.com/elastic/go-elasticsearch/v7 v7.7.0
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/go-redis/redis v6.14.2+incompatible
 	github.com/go-sql-driver/mysql v1.5.0

@@ -32,7 +32,7 @@ func readChan(c <-chan int) {
 		}
 	}
 }
-func main() {
+func main_1() {
 	pool := 3
 	c := make(chan int, pool) // 申请缓冲为3int chan
 	go readChan(c)            // 新开协程 每隔二秒，读channel里的数据

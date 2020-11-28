@@ -1,22 +1,116 @@
+// package main
+
+// import (
+// 	"context"
+// 	"fmt"
+//     "github.com/go-redis/redis/v8"
+// )
+
+// var ctx = context.Background()
+
+// func main() {
+//     rdb := redis.NewClient(&redis.Options{
+//         Addr:     "localhost:6379",
+//         Password: "", // no password set
+//         DB:       0,  // use default DB
+//     })
+
+// 	err := rdb.Ping(ctx).Err()
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+
+//     err = rdb.Set(ctx, "hello_1", "world_1", 0).Err()
+//     if err != nil {
+//         panic(err)
+//     }
+
+// 	err = rdb.Set(ctx, "hello_2", "world_2", 0).Err()
+//     if err != nil {
+//         panic(err)
+// 	}
+
+//     val, err := rdb.Keys(ctx, "hello*").Result()
+//     if err != nil {
+//         panic(err)
+//     }
+// 	fmt.Println("key: ", val)
+	
+// 	for _, res := range val {
+// 		val, err := rdb.Get(ctx, res).Result()
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 		fmt.Println("result: ", val)
+// 	}
+
+//     val2, err := rdb.Get(ctx, "key2").Result()
+//     if err == redis.Nil {
+//         fmt.Println("key2 does not exist")
+//     } else if err != nil {
+//         panic(err)
+//     } else {
+//         fmt.Println("key2", val2)
+//     }
+//     // Output: key value
+//     // key2 does not exist
+// }
+
+
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+    "github.com/go-redis/redis/v7"
+)
 
-var block = "package"
+var ctx = context.Background()
 
 func main() {
-	block := "function"
-	{
-		block := 1
-		fmt.Printf("The block is %+v \n", block)
+    rdb := redis.NewClient(&redis.Options{
+        Addr:     "localhost:6379",
+        Password: "", // no password set
+        DB:       0,  // use default DB
+	})
+	
+	pong, err := rdb.Ping().Result()
+	if err != nil {
+		fmt.Println(err)
 	}
-	fmt.Printf("The block is %+v  \n", block)
 
-	var a interface{}
-	a = 1
-	if a != nil {
-		a := "2"
-		fmt.Println(a)
+    err = rdb.Set( "hello_1", "world_1", 0).Err()
+    if err != nil {
+        panic(err)
+    }
+
+	err = rdb.Set( "hello_2", "world_2", 0).Err()
+    if err != nil {
+        panic(err)
 	}
-	fmt.Println(a)
+
+    val, err := rdb.Keys( "hello*").Result()
+    if err != nil {
+        panic(err)
+    }
+	fmt.Println("key: ", val)
+	
+	for _, res := range val {
+		val, err := rdb.Get( res).Result()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("result: ", val)
+	}
+
+    val2, err := rdb.Get( "key2").Result()
+    if err == redis.Nil {
+        fmt.Println("key2 does not exist")
+    } else if err != nil {
+        panic(err)
+    } else {
+        fmt.Println("key2", val2)
+    }
+    // Output: key value
+    // key2 does not exist
 }

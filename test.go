@@ -1,116 +1,108 @@
-// package main
-
-// import (
-// 	"context"
-// 	"fmt"
-//     "github.com/go-redis/redis/v8"
-// )
-
-// var ctx = context.Background()
-
-// func main() {
-//     rdb := redis.NewClient(&redis.Options{
-//         Addr:     "localhost:6379",
-//         Password: "", // no password set
-//         DB:       0,  // use default DB
-//     })
-
-// 	err := rdb.Ping(ctx).Err()
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-
-//     err = rdb.Set(ctx, "hello_1", "world_1", 0).Err()
-//     if err != nil {
-//         panic(err)
-//     }
-
-// 	err = rdb.Set(ctx, "hello_2", "world_2", 0).Err()
-//     if err != nil {
-//         panic(err)
-// 	}
-
-//     val, err := rdb.Keys(ctx, "hello*").Result()
-//     if err != nil {
-//         panic(err)
-//     }
-// 	fmt.Println("key: ", val)
-	
-// 	for _, res := range val {
-// 		val, err := rdb.Get(ctx, res).Result()
-// 		if err != nil {
-// 			panic(err)
-// 		}
-// 		fmt.Println("result: ", val)
-// 	}
-
-//     val2, err := rdb.Get(ctx, "key2").Result()
-//     if err == redis.Nil {
-//         fmt.Println("key2 does not exist")
-//     } else if err != nil {
-//         panic(err)
-//     } else {
-//         fmt.Println("key2", val2)
-//     }
-//     // Output: key value
-//     // key2 does not exist
-// }
-
-
 package main
 
 import (
-	"context"
-	"fmt"
-    "github.com/go-redis/redis/v7"
+	// "fmt"
+    // "crypto/md5"
+    "log"
 )
 
-var ctx = context.Background()
-
+type Person struct {
+    Name string
+    Age int
+}
+ 
 func main() {
-    rdb := redis.NewClient(&redis.Options{
-        Addr:     "localhost:6379",
-        Password: "", // no password set
-        DB:       0,  // use default DB
-	})
-	
-	pong, err := rdb.Ping().Result()
-	if err != nil {
-		fmt.Println(err)
-	}
+    // md5Res := md5.New()
+    // md5Res.Write([]byte("100"))
+    // res := md5Res.Sum(nil)
+    // log.Println("res:", fmt.Sprintf("%x", res))
 
-    err = rdb.Set( "hello_1", "world_1", 0).Err()
-    if err != nil {
-        panic(err)
+    // res := md5.Sum([]byte("100"))
+    // log.Println("res:", fmt.Sprintf("%x", res))
+    person := Person{
+        Name: "zhangshan",
+        Age: 20,
     }
 
-	err = rdb.Set( "hello_2", "world_2", 0).Err()
-    if err != nil {
-        panic(err)
-	}
-
-    val, err := rdb.Keys( "hello*").Result()
-    if err != nil {
-        panic(err)
+    personTwo := Person{
+        Name: "lisi",
+        Age: 40,
     }
-	fmt.Println("key: ", val)
-	
-	for _, res := range val {
-		val, err := rdb.Get( res).Result()
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("result: ", val)
-	}
 
-    val2, err := rdb.Get( "key2").Result()
-    if err == redis.Nil {
-        fmt.Println("key2 does not exist")
-    } else if err != nil {
-        panic(err)
-    } else {
-        fmt.Println("key2", val2)
+
+    // 引用类型作为值传递
+    slice := make([]Person, 0)
+    slice = append(slice, person, personTwo)
+    changePerson(slice)
+    log.Printf("not pointer slice: person.Name[%+v], person.Age[%+v]", slice[0].Name, slice[0].Age)
+    log.Printf("not pointer slice: person.Name[%+v], person.Age[%+v]", slice[1].Name, slice[1].Age)
+
+    slicePointer := make([]*Person, 0)
+    slicePointer = append(slicePointer, &person, &personTwo)
+    changePersonPointer(slicePointer)
+    log.Printf("pointer slice: person.Name[%+v], person.Age[%+v]", slicePointer[0].Name, slicePointer[0].Age)
+    log.Printf("pointer slice: person.Name[%+v], person.Age[%+v]", slicePointer[1].Name, slicePointer[1].Age)
+
+    personThree := Person{
+        Name: "zhangshan",
+        Age: 20,
     }
-    // Output: key value
-    // key2 does not exist
+    personMap := make(map[string][]Person)
+    personMap["p"] = []Person{personThree}
+    changePersonMap(personMap)
+    log.Printf("map: person.Name[%+v], person.Age[%+v]", personMap["p"][0].Name, personMap["p"][0].Age)
+}
+
+func changePerson(slice []Person) error {
+    sliceRes := make([]*Person, 0)
+    
+    for i, person := range slice {
+        personInner := person
+        sliceRes = append(sliceRes, &personInner)
+        if i == 0{
+            person.Name = "1111111"
+            person.Age = 100
+        }else {
+            person.Name = "22222"
+            person.Age = 200
+        }
+    }
+    
+    log.Printf("sliceRes: %+v", *sliceRes[0])
+    log.Printf("sliceRes: %+v", *sliceRes[1])
+
+    return nil
+}
+
+func changePersonPointer(slice []*Person) error {
+    sliceRes := make([]*Person, 0)
+    
+    for i, person := range slice {
+        personInner := person
+        sliceRes = append(sliceRes, personInner)
+        if i == 0{
+            person.Name = "1111111"
+            person.Age = 100
+        }else {
+            person.Name = "22222"
+            person.Age = 200
+        }
+    }
+    
+    log.Printf("sliceRes: %+v", *sliceRes[0])
+    log.Printf("sliceRes: %+v", *sliceRes[1])
+
+    return nil
+}
+
+func changePersonMap(personMap map[string][]Person) error {
+    for _, person := range personMap {
+        log.Printf("map.Name: %+v", person[0].Name)
+        log.Printf("map.Age: %+v", person[0].Age)
+
+        person[0].Name = "1111111"
+        person[0].Age = 100
+    }
+
+    return nil
 }

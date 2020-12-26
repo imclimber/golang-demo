@@ -100,7 +100,7 @@ func main() {
 
 	groupInfo := GroupInfo{
 		GroupCode:             "fof",
-		GroupCodeRelationPath: "fof.fof",
+		GroupCodeRelationPath: "fof",
 		Count:                 2,
 		Entities:              []string{"fof_100", "fof_200"},
 	}
@@ -147,7 +147,7 @@ func fillLevelGroupDatas(groupInfo GroupInfo, groupNode *CommonGroupNode, teamID
 	// 抽取公共方法：将函数获取的结果，填入到标签联动群，后续可以直接利用递归
 	for i := 0; i < len(funcArray); i++ {
 		childGroupInfo := GroupInfo{}
-		if groupInfoValues, err := funcArray.Call(i, groupNode.EntityIDs, teamID); err == nil {
+		if groupInfoValues, err := funcArray.Call(i, groupNode.EntityIDs, teamID, groupNode.GroupCodeRelationPath+"."); err == nil {
 			if childGroupInfo, ok = groupInfoValues[0].Interface().(GroupInfo); ok {
 
 				// 每个方法返回的结果就是最终需要的信息
@@ -219,40 +219,44 @@ func fillFuncInvestedFundArray() utils.FuncArray {
 
 // ================================================  联动sql ================================================
 
-func getInvestedFund(entityIDs []string, teamID string) (GroupInfo, error) {
+func getInvestedFund(entityIDs []string, teamID string, parentGroupCodeRelationPath string) (GroupInfo, error) {
 	groupInfo := GroupInfo{}
 
 	groupInfo.Entities = []string{"invested_fund_100", "invested_fund_200"}
 	groupInfo.GroupCode = "invested_fund"
+	groupInfo.GroupCodeRelationPath = parentGroupCodeRelationPath + groupInfo.GroupCode
 	groupInfo.Count = len(groupInfo.Entities)
 
 	return groupInfo, nil
 }
 
-func getInvestedCompanies(entityIDs []string, teamID string) (GroupInfo, error) {
+func getInvestedCompanies(entityIDs []string, teamID string, parentGroupCodeRelationPath string) (GroupInfo, error) {
 	groupInfo := GroupInfo{}
 
 	groupInfo.Entities = []string{"invested_company_100", "invested_company_200"}
 	groupInfo.GroupCode = "invested_company"
+	groupInfo.GroupCodeRelationPath = parentGroupCodeRelationPath + groupInfo.GroupCode
 	groupInfo.Count = len(groupInfo.Entities)
 	return groupInfo, nil
 }
 
-func getLP(entityIDs []string, teamID string) (GroupInfo, error) {
+func getLP(entityIDs []string, teamID string, parentGroupCodeRelationPath string) (GroupInfo, error) {
 	groupInfo := GroupInfo{}
 
 	groupInfo.Entities = []string{"lp_100", "lp_200"}
 	groupInfo.GroupCode = "lp"
+	groupInfo.GroupCodeRelationPath = parentGroupCodeRelationPath + groupInfo.GroupCode
 	groupInfo.Count = len(groupInfo.Entities)
 
 	return groupInfo, nil
 }
 
-func getInvestedFundInvestments(entityIDs []string, teamID string) (GroupInfo, error) {
+func getInvestedFundInvestments(entityIDs []string, teamID string, parentGroupCodeRelationPath string) (GroupInfo, error) {
 	groupInfo := GroupInfo{}
 
 	groupInfo.Entities = []string{"invested_fund_investments_100", "invested_fund_investments_200"}
 	groupInfo.GroupCode = "invested_fund_investments"
+	groupInfo.GroupCodeRelationPath = parentGroupCodeRelationPath + groupInfo.GroupCode
 	groupInfo.Count = len(groupInfo.Entities)
 	return groupInfo, nil
 }

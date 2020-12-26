@@ -1,0 +1,38 @@
+{
+    "GroupCode": "fof",
+    "GroupCodeRelationPath": "",
+    "EntityIDs": [
+        "fof_100",
+        "fof_200"
+    ],
+    "ChildGroupNodes": [
+        {
+            "GroupCode": "invested_fund",
+            "GroupCodeRelationPath": "",
+            "EntityIDs": [
+                "invested_fund_100",
+                "invested_fund_200"
+            ],
+            "ChildGroupNodes": [
+                {
+                    "GroupCode": "invested_fund_investments",
+                    "GroupCodeRelationPath": "",
+                    "EntityIDs": [
+                        "invested_fund_investments_100",
+                        "invested_fund_investments_200"
+                    ],
+                    "ChildGroupNodes": null
+                }
+            ]
+        },
+        {
+            "GroupCode": "invested_company",
+            "GroupCodeRelationPath": "",
+            "EntityIDs": [
+                "invested_company_100",
+                "invested_company_200"
+            ],
+            "ChildGroupNodes": null
+        }
+    ]
+}

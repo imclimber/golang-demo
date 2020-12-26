@@ -1,0 +1,34 @@
+[
+    {
+        "entities": [
+            "fof_100",
+            "fof_200"
+        ],
+        "group_code": "fof",
+        "count": 2
+    },
+    {
+        "entities": [
+            "invested_fund_100",
+            "invested_fund_200"
+        ],
+        "group_code": "invested_fund",
+        "count": 2
+    },
+    {
+        "entities": [
+            "invested_fund_investments_100",
+            "invested_fund_investments_200"
+        ],
+        "group_code": "invested_fund_investments",
+        "count": 2
+    },
+    {
+        "entities": [
+            "invested_company_100",
+            "invested_company_200"
+        ],
+        "group_code": "invested_company",
+        "count": 2
+    }
+]

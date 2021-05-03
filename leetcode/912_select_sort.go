@@ -18,7 +18,7 @@ func select_sort(nums []int) {
 		minIndex := i
 		for j := i + 1; j < len; j++ {
 			if nums[j] < nums[minIndex] {
-				minIndex = j
+				minIndex = j // 只需要记录最小值，内部循环无需交换
 			}
 		}
 

@@ -10,7 +10,7 @@ func main() {
 	fmt.Println("after sort, nums: ", nums)
 }
 
-func select_sort(nums []int) {
+func select_sort(nums []int) []int {
 	len := len(nums)
 
 	for i := 0; i < len-1; i++ {
@@ -27,6 +27,8 @@ func select_sort(nums []int) {
 
 		// fmt.Println("nums: ", nums)
 	}
+
+	return nums
 }
 
 func swap(nums []int, i int, minIndex int) {

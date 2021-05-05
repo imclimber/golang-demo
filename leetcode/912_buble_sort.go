@@ -25,13 +25,22 @@ func bubbleSort(nums []int) []int {
 	//     nums[i], nums[minIndex] = nums[minIndex], nums[i]
 	// }
 
-	// 冒泡排序(邻居才可以交换)
+	// 冒泡排序(邻居才可以交换，记录是否还需下一轮判定)
+	isSorted := true
 	for i := 0; i < len-1; i++ {
+
+		isSorted = true
 		for j := len - 1; j > i; j-- {
 			if nums[j-1] > nums[j] {
 				nums[j-1], nums[j] = nums[j], nums[j-1]
+				isSorted = false
 			}
 		}
+
+		if isSorted {
+			break
+		}
 	}
+
 	return nums
 }

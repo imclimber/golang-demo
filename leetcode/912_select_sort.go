@@ -6,11 +6,11 @@ func main() {
 	nums := []int{8, 6, 7, 2, 9, 4, 3, 1, 0, 5}
 
 	fmt.Println("before sort, nums: ", nums)
-	select_sort(nums)
+	selectSort(nums)
 	fmt.Println("after sort, nums: ", nums)
 }
 
-func select_sort(nums []int) []int {
+func selectSort(nums []int) []int {
 	len := len(nums)
 
 	for i := 0; i < len-1; i++ {

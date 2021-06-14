@@ -30,7 +30,3 @@ func selectSort(nums []int) []int {
 
 	return nums
 }
-
-func swap(nums []int, i int, minIndex int) {
-	nums[minIndex], nums[i] = nums[i], nums[minIndex]
-}

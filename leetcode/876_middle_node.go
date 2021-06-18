@@ -7,7 +7,7 @@ func main() {
 	head = createList(head)
 	printList(head)
 
-	head = middleNode(head)
+	head = middleNode_V2(head)
 	// printListWithDummy(head)
 	// printList(head)
 }
@@ -40,6 +40,19 @@ func middleNode(head *ListNode) *ListNode {
 	return slow
 }
 
+func middleNode_V2(head *ListNode) *ListNode {
+	fast := head
+	slow := head
+
+	for fast != nil && fast.Next != nil {
+		fast = fast.Next.Next
+		slow = slow.Next
+	}
+
+	fmt.Println("middleNode_V2 slow: ", slow.Val)
+	return slow
+}
+
 func createList(head *ListNode) *ListNode {
 	if head == nil {
 		head = &ListNode{
@@ -50,7 +63,7 @@ func createList(head *ListNode) *ListNode {
 	cur := head
 	next := head
 
-	for i := 2; i < 8; i++ {
+	for i := 2; i < 7; i++ {
 		next = &ListNode{
 			Val: i,
 		}

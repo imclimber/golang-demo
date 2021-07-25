@@ -1,0 +1,38 @@
+[
+    {
+        "entities": [
+            "fof_100",
+            "fof_200"
+        ],
+        "group_code": "fof",
+        "group_code_relation_path": "fof",
+        "count": 2
+    },
+    {
+        "entities": [
+            "invested_fund_100",
+            "invested_fund_200"
+        ],
+        "group_code": "invested_fund",
+        "group_code_relation_path": "fof.invested_fund",
+        "count": 2
+    },
+    {
+        "entities": [
+            "invested_fund_investments_100",
+            "invested_fund_investments_200"
+        ],
+        "group_code": "invested_fund_investments",
+        "group_code_relation_path": "fof.invested_fund.invested_fund_investments",
+        "count": 2
+    },
+    {
+        "entities": [
+            "invested_company_100",
+            "invested_company_200"
+        ],
+        "group_code": "invested_company",
+        "group_code_relation_path": "fof.invested_company",
+        "count": 2
+    }
+]

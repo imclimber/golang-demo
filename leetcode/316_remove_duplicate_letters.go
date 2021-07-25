@@ -9,8 +9,52 @@ func main() {
 	s := "cbacdcbc"
 	// s := "bcabc"
 	// s := "abacb"
-	res := removeDuplicateLetters(s)
+	res := removeDuplicateLetters_V2(s)
 	fmt.Println("res:", res)
+}
+
+func removeDuplicateLetters_V2(s string) string {
+	// 获取每个元素的数量，看过的元素计数不能出现在其中
+	existsCount := make([]int, 26)
+	for i, _ := range s {
+		fmt.Printf("s[i]: %c\n", s[i])
+
+		existsCount[s[i]-'a']++
+	}
+	// fmt.Println("existsCount: ", existsCount)
+
+	// 缓存栈中所有元素，用于判定重复元素
+	visited := make([]bool, 26)
+
+	stack := make([]byte, 0)
+
+	for i, _ := range s {
+		ch := s[i]
+
+		// 元素已经存在于缓存中，无需处理
+		if visited[ch-'a'] {
+			existsCount[ch-'a']-- // 次数需要减一，保证看过的元素不出现在统计信息中
+			continue
+		}
+
+		// 元素小于栈顶元素字典序，且后续元素中存在相同栈顶元素，出栈，删除缓存中元素
+		for len(stack) > 0 && ch < stack[len(stack)-1] && existsCount[stack[len(stack)-1]-'a'] > 0 {
+			tmp := stack[len(stack)-1]
+			stack = stack[0 : len(stack)-1]
+			visited[tmp-'a'] = false
+		}
+
+		// 元素不存在于缓存中，加入缓存，同时加入栈
+		visited[ch-'a'] = true
+		stack = append(stack, ch)
+		existsCount[ch-'a']-- // 次数需要减一，保证看过的元素不出现在统计信息中
+
+		fmt.Println("visited: ", visited)
+		fmt.Println("stack: ", stack)
+		fmt.Println("existsCount: ", existsCount)
+	}
+
+	return string(stack)
 }
 
 func removeDuplicateLetters(s string) string {
@@ -28,9 +72,13 @@ func removeDuplicateLetters(s string) string {
 	for i, _ := range strs {
 		fmt.Println(strs[i], stack.peek(), isExists(strs, i+1, slen-1, stack.peek()), strs[i+1:slen])
 
+		// 栈中已经存在，跳过
+		if _, ok := visitedMap[strs[i]]; ok {
+			continue
+		}
+
 		// 之前元素存在字典序大的，判定之后元素中存在则需要弹出
-		_, ok := visitedMap[strs[i]]
-		for !ok && strs[i] < stack.peek() && isExists(strs, i+1, slen-1, stack.peek()) {
+		for !stack.isEmpty() && strs[i] < stack.peek() && isExists(strs, i+1, slen-1, stack.peek()) {
 			delete(visitedMap, stack.peek())
 			stack.pop()
 		}

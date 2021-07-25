@@ -2,28 +2,64 @@ package main
 
 import (
 	"fmt"
+	"runtime"
+	"sync"
+	"time"
 )
 
-func foo(a []int) {
-	fmt.Printf("foo point of a: %+p\n", &a)
-	a = append(a, 1, 2, 3, 4, 5, 6, 7, 8)
-	fmt.Printf("after append foo point of a: %+p\n", &a)
-	a[0] = 200
+// Pool Goroutine Pool
+type Pool struct {
+	queue chan int
+	wg    *sync.WaitGroup
+}
+
+// New 新建一个协程池
+func NewPool(size int) *Pool {
+	if size <= 0 {
+		size = 1
+	}
+	return &Pool{
+		queue: make(chan int, size),
+		wg:    &sync.WaitGroup{},
+	}
+}
+
+// Add 新增一个执行
+func (p *Pool) Add(delta int) {
+	// delta为正数就添加
+	for i := 0; i < delta; i++ {
+		p.queue <- 1
+	}
+	// delta为负数就减少
+	for i := 0; i > delta; i-- {
+		<-p.queue
+	}
+	p.wg.Add(delta)
+}
+
+// Done 执行完成减一
+func (p *Pool) Done() {
+	<-p.queue
+	p.wg.Done()
+}
+
+// Wait 等待Goroutine执行完毕
+func (p *Pool) Wait() {
+	p.wg.Wait()
 }
 
 func main() {
-	a := []int{1, 2, 3, 4}
-	fmt.Printf("before point of a: %+p\n", &a)
-	foo(a)
-	fmt.Printf("after point of a: %+p\n", &a)
-	fmt.Println(a)
-
-	b := a[1:3]
-	fmt.Printf("b: %+p\n", &b)
-	b = a[1:cap(a)]
-	fmt.Printf("after b: %+p\n", &b)
-
-	c := make([]int, 1)
-	c = append(c, 1)
-	fmt.Println("c: ", c)
+	// 这里限制5个并发
+	pool := NewPool(5)
+	fmt.Println("the NumGoroutine begin is:", runtime.NumGoroutine())
+	for i := 0; i < 20; i++ {
+		pool.Add(1)
+		go func(i int) {
+			time.Sleep(time.Second)
+			fmt.Println("the NumGoroutine continue  and i is:", runtime.NumGoroutine(), i)
+			pool.Done()
+		}(i)
+	}
+	pool.Wait()
+	fmt.Println("the NumGoroutine done is:", runtime.NumGoroutine())
 }

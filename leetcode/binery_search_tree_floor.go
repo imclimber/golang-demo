@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
 
 }
@@ -25,6 +27,7 @@ func floor(node *Node, key int) *Node {
 	if temp != nil {
 		return temp
 	}
+	fmt.Println("")
 	return node
 }
 

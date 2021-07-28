@@ -31,6 +31,8 @@ func floor(node *Node, key int) *Node {
 func buildTree() *Node {
 	head := new(Node)
 
-	head.Key= 39
-	head.Left = 
+	head.Key = 39
+	head.Left = nil
+
+	return nil
 }

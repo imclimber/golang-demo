@@ -1,90 +1,120 @@
 package main
 
 import (
-	"errors"
-	"io"
-	"log"
-	"net/http"
-	_ "net/http/pprof"
-	"strconv"
-	"strings"
+	"fmt"
+	"runtime"
+	"sync"
+	"time"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/fib/", fibHandler)
-	mux.HandleFunc("/repeat/", repeatHandler)
+	ov := make(chan struct{})
+	pool := NewGreedyPool(30, func() {
+		close(ov)
+	})
 
-	s := &http.Server{
-		Addr:    ":8080",
-		Handler: mux,
-	}
-
-	NewProfileHttpServer(":9999")
-
-	if err := s.ListenAndServe(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func NewProfileHttpServer(addr string) {
 	go func() {
-		log.Fatalln(http.ListenAndServe(addr, nil))
+		for {
+			time.Sleep(time.Second)
+			fmt.Println(runtime.NumGoroutine())
+		}
 	}()
+
+	time.Sleep(time.Second)
+	for i := 0; i < 100; i++ {
+		idx := i
+		pool.Send(func() {
+			idx += 1
+			fmt.Println(idx)
+			time.Sleep(time.Second)
+		})
+
+		fmt.Println("==========i========:", i)
+	}
+
+	pool.Over()
+	fmt.Println("============= before <- over===========================")
+	<-ov
+	fmt.Println("============= after <- over===========================")
+	fmt.Println("Over")
 }
 
-func fibHandler(w http.ResponseWriter, r *http.Request) {
-	n, err := strconv.Atoi(r.URL.Path[len("/fib/"):])
-	if err != nil {
-		// responseError(w, err)
-		io.WriteString(w, "xushaozhang-fib:"+err.Error())
-		return
-	}
+type PoolFunc func()
 
-	var result int
-	for i := 0; i < 1000; i++ {
-		result = fib(n)
-	}
-	// response(w, result)
-	io.WriteString(w, "xushaozhang-fib:"+string(result))
+// Greedy Pool
+type greedyPool struct {
+	pool chan PoolFunc
+	over chan struct{}
+
+	close PoolFunc
 }
 
-func repeatHandler(w http.ResponseWriter, r *http.Request) {
-	parts := strings.SplitN(r.URL.Path[len("/repeat/"):], "/", 2)
-	if len(parts) != 2 {
-		io.WriteString(w, errors.New("invalid params").Error())
-		return
+// NewGreedyPool: return greed pool
+func NewGreedyPool(size int, close PoolFunc) *greedyPool {
+	pool := &greedyPool{
+		pool:  make(chan PoolFunc, size),
+		over:  make(chan struct{}),
+		close: close,
 	}
 
-	s := parts[0]
-	n, err := strconv.Atoi(parts[1])
-	if err != nil {
-		// responseError(w, err)
-		io.WriteString(w, "xushaozhang-repeat:"+err.Error())
-		return
-	}
-
-	var result string
-	for i := 0; i < 1000; i++ {
-		result = repeat(s, n)
-	}
-	// response(w, result)
-	io.WriteString(w, "xushaozhang-repeat:"+string(result))
+	go pool.scheduler(size)
+	return pool
 }
 
-func repeat(s string, n int) string {
-	var result string
-	for i := 0; i < n; i++ {
-		result += s
-	}
+// Over: End of task issuance
+func (g *greedyPool) Over() {
+	close(g.over)
 
-	return result
 }
 
-func fib(n int) int {
-	if n <= 1 {
-		return 1
+// Send: Issue a task
+func (g *greedyPool) Send(fn PoolFunc) {
+	g.pool <- fn
+}
+
+func (g *greedyPool) scheduler(size int) {
+	var wg sync.WaitGroup
+	for i := 0; i < size; i++ {
+		wg.Add(1)
+		go g.task(&wg)
 	}
 
-	return fib(n-1) + fib(n-2)
+	fmt.Println("= =before wait===============")
+	wg.Wait()
+	fmt.Println("= ==after wait=======****************========")
+	g.close()
+	fmt.Println("========================================****************************")
+}
+
+func PrintStack() {
+	var buf [4096]byte
+	n := runtime.Stack(buf[:], false)
+	fmt.Printf("==> %s\n", string(buf[:n]))
+}
+
+func (g *greedyPool) task(wg *sync.WaitGroup) {
+	defer func() {
+		wg.Done()
+
+		// recover
+		if err := recover(); err != nil {
+			PrintStack()
+			fmt.Println("Recover Err: ", err)
+		}
+	}()
+
+loop:
+	for {
+		select {
+		case i, ex := <-g.pool:
+			if !ex {
+				break loop
+			}
+			fmt.Println("pool in ...........")
+			i()
+		case <-g.over:
+			fmt.Println("over is closed ----------------------------")
+			break loop
+		}
+	}
 }

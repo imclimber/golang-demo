@@ -1,96 +1,90 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"sync"
-	"time"
+	"errors"
+	"io"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	findTarget()
-}
+	mux := http.NewServeMux()
+	mux.HandleFunc("/fib/", fibHandler)
+	mux.HandleFunc("/repeat/", repeatHandler)
 
-func findTarget() {
-	ctx, canFunc := context.WithCancel(context.Background())
-
-	inputs := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-
-	var wg sync.WaitGroup
-
-	for i := 0; i < 9; i += 4 {
-		wg.Add(1)
-		go findTargetInner(ctx, canFunc, &wg, inputs, i, i+3, 5)
+	s := &http.Server{
+		Addr:    ":8080",
+		Handler: mux,
 	}
 
-	wg.Wait()
-}
+	NewProfileHttpServer(":9999")
 
-func findTargetInner(ctx context.Context, canf context.CancelFunc, wg *sync.WaitGroup, in []int, start, end int, target int) {
-	defer wg.Done()
-
-	fmt.Println("in,start,end,target", in, start, end, target)
-	timeTrigger := time.After(time.Second * 3)
-	for {
-		select {
-		case <-ctx.Done():
-			fmt.Println("canceld")
-			return
-		case <-timeTrigger:
-			fmt.Println("time is up")
-			return
-		default:
-			for i := start; i <= end; i++ {
-				if in[i] == target {
-					fmt.Println("found:", i)
-					// time.Sleep(time.Second * 5)
-					canf()
-				} else {
-					fmt.Println("cannot find,i:", i)
-					// time.Sleep(time.Second * 1)
-				}
-			}
-		}
+	if err := s.ListenAndServe(); err != nil {
+		log.Fatal(err)
 	}
 }
 
-func findTargetWithChannel() {
-	ctx, canFunc := context.WithCancel(context.Background())
+func NewProfileHttpServer(addr string) {
+	go func() {
+		log.Fatalln(http.ListenAndServe(addr, nil))
+	}()
+}
 
-	inputs := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-
-	var wg sync.WaitGroup
-
-	for i := 0; i < 9; i += 4 {
-		wg.Add(1)
-		go func(ctx context.Context, in []int, start, end int, target int) {
-			defer wg.Done()
-
-			fmt.Println("in,start,end,target", in, start, end, target)
-			timeTrigger := time.After(time.Second * 3)
-			for {
-				select {
-				case <-ctx.Done():
-					fmt.Println("canceld")
-					return
-				case <-timeTrigger:
-					fmt.Println("time is up")
-					return
-				default:
-					for i := start; i <= end; i++ {
-						if in[i] == target {
-							fmt.Println("found:", i)
-							// time.Sleep(time.Second * 5)
-							canFunc()
-						} else {
-							fmt.Println("cannot find,i:", i)
-							// time.Sleep(time.Second * 1)
-						}
-					}
-				}
-			}
-		}(ctx, inputs, i, i+3, 5)
+func fibHandler(w http.ResponseWriter, r *http.Request) {
+	n, err := strconv.Atoi(r.URL.Path[len("/fib/"):])
+	if err != nil {
+		// responseError(w, err)
+		io.WriteString(w, "xushaozhang-fib:"+err.Error())
+		return
 	}
 
-	wg.Wait()
+	var result int
+	for i := 0; i < 1000; i++ {
+		result = fib(n)
+	}
+	// response(w, result)
+	io.WriteString(w, "xushaozhang-fib:"+string(result))
+}
+
+func repeatHandler(w http.ResponseWriter, r *http.Request) {
+	parts := strings.SplitN(r.URL.Path[len("/repeat/"):], "/", 2)
+	if len(parts) != 2 {
+		io.WriteString(w, errors.New("invalid params").Error())
+		return
+	}
+
+	s := parts[0]
+	n, err := strconv.Atoi(parts[1])
+	if err != nil {
+		// responseError(w, err)
+		io.WriteString(w, "xushaozhang-repeat:"+err.Error())
+		return
+	}
+
+	var result string
+	for i := 0; i < 1000; i++ {
+		result = repeat(s, n)
+	}
+	// response(w, result)
+	io.WriteString(w, "xushaozhang-repeat:"+string(result))
+}
+
+func repeat(s string, n int) string {
+	var result string
+	for i := 0; i < n; i++ {
+		result += s
+	}
+
+	return result
+}
+
+func fib(n int) int {
+	if n <= 1 {
+		return 1
+	}
+
+	return fib(n-1) + fib(n-2)
 }

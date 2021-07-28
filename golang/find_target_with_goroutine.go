@@ -1,5 +1,14 @@
 package main
 
+/*
+- [并发编程的数据竞争问题以及解决之道](https://juejin.cn/post/6844904170760175630)
+假设有一个超长的切片，切片的元素类型为 int，切片中的元素为乱序排列。
+限时 5 秒，使用多个 goroutine 查找切片中是否存在给定值，在找到目标值或者超时后立刻结束所有 goroutine 的执行。
+
+比如切片为：[23, 32, 78, 43, 76, 65, 345, 762, …… 915, 86]，查找的目标值为 345，如果切片中存在目标值程序输出:”Found it!” 并且立即取消仍在执行查找任务的 goroutine。
+如果在超时时间为找到目标值程序输出:”Timeout! Not Found”，同时立即取消仍在执行查找任务的 goroutine。
+*/
+
 import (
 	"context"
 	"fmt"
@@ -9,7 +18,7 @@ import (
 
 func main() {
 	// findTargetWithContext()  // 方法一
-	findTarget_V1() // 方法二https://juejin.cn/post/6844904170760175630
+	findTargetWithChannel() // 方法二
 }
 
 func findTargetWithContext() {

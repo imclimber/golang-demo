@@ -1,65 +1,54 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"runtime"
+	"io/ioutil"
+	"math/rand"
+	"net/http"
 	"sync"
 	"time"
 )
 
-// Pool Goroutine Pool
-type Pool struct {
-	queue chan int
-	wg    *sync.WaitGroup
-}
-
-// New 新建一个协程池
-func NewPool(size int) *Pool {
-	if size <= 0 {
-		size = 1
+func doHTTPRequest(url string) {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
 	}
-	return &Pool{
-		queue: make(chan int, size),
-		wg:    &sync.WaitGroup{},
-	}
-}
 
-// Add 新增一个执行
-func (p *Pool) Add(delta int) {
-	// delta为正数就添加
-	for i := 0; i < delta; i++ {
-		p.queue <- 1
-	}
-	// delta为负数就减少
-	for i := 0; i > delta; i-- {
-		<-p.queue
-	}
-	p.wg.Add(delta)
-}
-
-// Done 执行完成减一
-func (p *Pool) Done() {
-	<-p.queue
-	p.wg.Done()
-}
-
-// Wait 等待Goroutine执行完毕
-func (p *Pool) Wait() {
-	p.wg.Wait()
+	data, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("ret:", string(data))
+	resp.Body.Close()
 }
 
 func main() {
-	// 这里限制5个并发
-	pool := NewPool(5)
-	fmt.Println("the NumGoroutine begin is:", runtime.NumGoroutine())
-	for i := 0; i < 20; i++ {
-		pool.Add(1)
-		go func(i int) {
-			time.Sleep(time.Second)
-			fmt.Println("the NumGoroutine continue  and i is:", runtime.NumGoroutine(), i)
-			pool.Done()
-		}(i)
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for {
+			doHTTPRequest(fmt.Sprintf("http://localhost:8080/fib/%d", rand.Intn(5)))
+			time.Sleep(500 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		for {
+			doHTTPRequest(fmt.Sprintf("http://localhost:8080/repeat/%s/%d", generate(rand.Intn(5)), rand.Intn(5)))
+			time.Sleep(500 * time.Millisecond)
+		}
+	}()
+	wg.Wait()
+}
+
+const Letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func generate(n int) string {
+	var buf bytes.Buffer
+	for i := 0; i < n; i++ {
+		buf.WriteByte(Letters[rand.Intn(len(Letters))])
 	}
-	pool.Wait()
-	fmt.Println("the NumGoroutine done is:", runtime.NumGoroutine())
+	return buf.String()
 }

@@ -1,12 +1,11 @@
 // 1、有一个串 abc=1&d=2  ，实现字符串分割，导出abc=>1，b=>2的KV结构，请充分考虑对异常情况的兼容￼
 package main
 
-import(
+import (
 	"fmt"
-	"bytes"
 )
 
-func main(){
+func main() {
 	input := "abc=1&d=2&e*2"
 	res := getResult(input)
 
@@ -30,25 +29,24 @@ func getResult(input string) map[string]string {
 			left = indexArray[i] + 1
 		}
 
-
 		strs = append(strs, str)
 	}
 
 	leng1 := len(strs)
-	for i := 0; i<leng1; i++{
+	for i := 0; i < leng1; i++ {
 		fmt.Println("-----------------------")
 		str := strs[i]
-		fmt.Println("str: ",str)
+		fmt.Println("str: ", str)
 		kvIndex, hasGet := getTargetLocationSecond(str)
 		if !hasGet {
 			continue
 		}
-		fmt.Println("kvIndex: ",kvIndex)
+		fmt.Println("kvIndex: ", kvIndex)
 
 		fmt.Println("*****************")
 		leftPart := getKVString(str, 0, kvIndex-1)
 		rightPart := getKVString(str, kvIndex+1, len(str)-1)
-		fmt.Println("leftPart, rightPart: ",leftPart, rightPart)
+		fmt.Println("leftPart, rightPart: ", leftPart, rightPart)
 		mapRes[leftPart] = rightPart
 	}
 
@@ -64,7 +62,7 @@ func getTargetLocationFirst(input string) []int {
 	}
 	res = append(res, len(input))
 
-	return res 
+	return res
 }
 
 func getTargetLocationSecond(input string) (int, bool) {
@@ -77,15 +75,14 @@ func getTargetLocationSecond(input string) (int, bool) {
 	return 0, false
 }
 
-
-func getKVString(input string, left, right int) string{
+func getKVString(input string, left, right int) string {
 	fmt.Println("getKVString, left, right:", left, right)
 
 	leng := len(input)
 	var res string
 
 	for i, _ := range input {
-		if i >= left && i<=right && right < leng {
+		if i >= left && i <= right && right < leng {
 			res += string(input[i])
 		}
 	}
@@ -98,7 +95,7 @@ func getKVString(input string, left, right int) string{
 	// 	}
 	// }
 
-	res = buf.String()
+	// res = buf.String()
 	fmt.Println("getKVString: ", res)
 	return res
 }

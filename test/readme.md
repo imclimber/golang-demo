@@ -1,0 +1,1 @@
+用于 Windows 系统跑程序，需要先生成 go.mod 文件，例如：go mod init aaa

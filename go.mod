@@ -3,7 +3,7 @@ module github.com/golang-demo
 go 1.13
 
 require (
-	github.com/astaxie/beego v1.12.1
+	github.com/astaxie/beego v1.12.2
 	github.com/dgryski/trifles v0.0.0-20190318185328-a8d75aae118c
 	github.com/elastic/go-elasticsearch/v7 v7.7.0
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
@@ -17,7 +17,6 @@ require (
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.3 // indirect
 	github.com/pkg/errors v0.8.1
-	github.com/pkg/profile v1.6.0 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
